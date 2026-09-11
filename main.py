@@ -206,7 +206,7 @@ def metatroph_se_arithmous(dyadikos_grafos):
 
 def emfanisi_pinaka(dekadikos_grafos): 
     for komvos in sorted(dekadikos_grafos.keys(), reverse=True):
-        geitones = sorted(dekadikos_grafos[komvos])
+        geitones = (dekadikos_grafos[komvos])
         print(f"{komvos} -> {geitones}")
 
 ##gia dfs
@@ -274,6 +274,43 @@ def dfs(graph, start, komvoi_grafou):
             stack.pop()
                 
     return diadromes
+
+def diaxorismosgenlex(diadromes):
+    valid_paths = []
+    prothematafores = {}
+    first_path = diadromes[0]
+    
+    for komvos in first_path:
+        komvos_str = str(komvos)
+        prothema = komvos_str[:-1]
+        prothematafores[prothema] = prothematafores.get(prothema, 0) + 1
+
+    for path in diadromes:
+        is_valid = True
+
+        for i in range(len(path) - 1):
+            current_node = str(path[i])
+            next_node = str(path[i + 1])
+            current_prefix = current_node[:-1]
+            next_prefix = next_node[:-1]
+
+            if current_prefix != next_prefix:
+                if current_prefix in prothematafores:
+                    if prothematafores[current_prefix] == 3:
+                        if i-1>0:
+                            next_node = str(path[i-1])
+                            if current_prefix != next_node[:3]:
+                                is_valid = False
+                    if prothematafores[current_prefix] == 2:
+                        if i-1>0:
+                            next_node = str(path[i-1])
+                            if current_prefix != next_node[:3]:
+                                is_valid = False
+
+        if is_valid and len(valid_paths)<5: ##kserw oti den einai o 100% sostos tropos alla den vrika tipota kalitero
+            valid_paths.append(path)
+
+    return valid_paths
 
 def teleutea(diadromes, n):
     neospinakas = []
@@ -371,4 +408,10 @@ elif mode == 'dfs':
     else: 
         for i in sorted(grafos_anaparastasi_diktwn.keys(), reverse=True):
             diadromes.extend(dfs(grafos_anaparastasi_diktwn, i, komvoi_grafou))
-        print(diadromes)
+        neosdiadromes = diaxorismosgenlex(diadromes)
+        neos_diadromes_dyadiko = teleutea(neosdiadromes, n)
+        neos_diadromes_dekadiko = teleutea2(neos_diadromes_dyadiko)
+        for i in range(len(neosdiadromes)):
+            print(neos_diadromes_dyadiko[i])
+            print(neosdiadromes[i])
+            print(neos_diadromes_dekadiko[i])
